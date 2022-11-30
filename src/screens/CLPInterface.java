@@ -4,17 +4,80 @@
  */
 package screens;
 
+import com.fazecast.jSerialComm.SerialPort;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author joao_
  */
 public class CLPInterface extends javax.swing.JFrame {
     
-    /**
-     * Creates new form CLPInterface
-     */
+    private String S1Expression;
+    private String S2Expression;
+    private String S3Expression;
+    private String S4Expression;
+    private String S5Expression;
+    private String S6Expression;
+    private String S7Expression;
+    private String S8Expression;
+    
+    private String S1ExpressionValues;
+    private String S2ExpressionValues;
+    private String S3ExpressionValues;
+    private String S4ExpressionValues;
+    private String S5ExpressionValues;
+    private String S6ExpressionValues;
+    private String S7ExpressionValues;
+    private String S8ExpressionValues;
+    
+    private String S1Value;
+    private String S2Value;
+    private String S3Value;
+    private String S4Value;
+    private String S5Value;
+    private String S6Value;
+    private String S7Value;
+    private String S8Value;
+    
+    private String E1Value;
+    private String E2Value;
+    private String E3Value;
+    private String E4Value;
+    private String E5Value;
+    private String E6Value;
+    private String E7Value;
+    private String E8Value;
+        
     public CLPInterface() {
         initComponents();
+        
+        this.S1Value = "0";
+        this.S2Value = "0";
+        this.S3Value = "0";
+        this.S4Value = "0";
+        this.S5Value = "0";
+        this.S6Value = "0";
+        this.S7Value = "0";
+        this.S8Value = "0";
+        
+        this.E1Value = "0";
+        this.E2Value = "0";
+        this.E3Value = "0";
+        this.E4Value = "0";
+        this.E5Value = "0";
+        this.E6Value = "0";
+        this.E7Value = "0";
+        this.E8Value = "0";
+        
     }
 
     /**
@@ -155,6 +218,11 @@ public class CLPInterface extends javax.swing.JFrame {
 
         InicializarButton.setFont(new java.awt.Font("Dialog", 0, 15)); // NOI18N
         InicializarButton.setText("INICIALIZAR");
+        InicializarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InicializarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -501,9 +569,9 @@ public class CLPInterface extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel11)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(expressaoS9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -826,6 +894,101 @@ public class CLPInterface extends javax.swing.JFrame {
         expressaoS7.setText("");
         expressaoS8.setText("");
     }//GEN-LAST:event_limparButtonActionPerformed
+
+    private void InicializarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InicializarButtonActionPerformed
+        
+        ScriptEngineManager sem = new ScriptEngineManager();
+        ScriptEngine se = sem.getEngineByName("JavaScript");
+            
+        String[] arrayExpressions = {
+            expressaoS1.getText(),
+            expressaoS2.getText(),
+            expressaoS3.getText(),
+            expressaoS4.getText(),
+            expressaoS5.getText(),
+            expressaoS6.getText(),
+            expressaoS7.getText(),
+            expressaoS8.getText()
+        };
+        
+        int[] arrayOutputValues = new int[8];
+        
+        SerialPort arduino = SerialPort.getCommPorts()[0];
+        arduino.openPort();
+        
+        //lendo
+        
+        /*arduino.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 1000, 0);
+        InputStream comPortInput = arduino.getInputStream();
+        BufferedReader in = new BufferedReader(new InputStreamReader(arduino.getInputStream()));*/
+        
+        
+        //arduino.closePort();
+        
+        InputStream comPortInput = arduino.getInputStream();
+        //OutputStream comPortOutput = arduino.getOutputStream();
+        
+        
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                
+                while (true) {  
+                    try {
+                        comPortInput.skip(comPortInput.available());
+                        int readOneByASCII;
+                        String phrase = "";
+                        do{
+                            readOneByASCII = comPortInput.read();
+                            char letraEscrita = (char)readOneByASCII;
+                            phrase = phrase+letraEscrita;
+                        }while(readOneByASCII != 10);
+                        System.out.println(phrase);
+                        
+                        if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
+                             /* 
+                            zE1=0
+                            E2=1
+                            E3=1
+                            E4=0
+                            E5=1
+                            E6=0
+                            E7=0
+                            E8=1
+                            */
+                            String[] splitphrase = phrase.split(";");
+                            //String firstIndex = splitphrase[0].split("/")[1];
+
+                            char[] arrayChar = new char[8];
+                            arrayChar[0] = splitphrase[0].charAt(4);
+
+                            for(int i=1; i<8; i++){
+                                arrayChar[i] = splitphrase[i].charAt(3);
+                            }
+                            
+                            for(int i=0; i<8; i++){
+                                for(int j=0; j<8; j++){
+                                    arrayExpressions[i] = arrayExpressions[i].replace(String.format("E%d", j+1), String.valueOf(arrayChar[j]));
+                                }
+                                arrayOutputValues[i] = (int)se.eval(arrayExpressions[i]);
+                                System.out.println(arrayOutputValues[i]);
+                            }
+                            //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+                            //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                            //.E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                            //E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+                            }
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }          
+        };
+        t.start();
+    }//GEN-LAST:event_InicializarButtonActionPerformed
 
     /**
      * @param args the command line arguments
