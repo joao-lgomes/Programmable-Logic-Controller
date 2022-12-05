@@ -435,10 +435,8 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel34" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
                       <Component id="valE3" alignment="0" max="32767" attributes="0"/>
-                      <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="valE2" alignment="0" pref="64" max="32767" attributes="0"/>
-                          <Component id="valE1" alignment="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="valE2" alignment="0" pref="64" max="32767" attributes="0"/>
+                      <Component id="valE1" alignment="0" max="32767" attributes="0"/>
                       <Component id="valS7" alignment="0" max="32767" attributes="0"/>
                       <Component id="valS6" alignment="0" max="32767" attributes="0"/>
                       <Component id="valS5" alignment="0" max="32767" attributes="0"/>

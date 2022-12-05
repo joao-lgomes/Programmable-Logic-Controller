@@ -79,7 +79,7 @@ public class CLPInterface extends javax.swing.JFrame {
         this.E6Value = "0";
         this.E7Value = "0";
         this.E8Value = "0";
-        
+                
     }
 
     /**
@@ -1122,6 +1122,17 @@ public class CLPInterface extends javax.swing.JFrame {
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine se = sem.getEngineByName("JavaScript");
             
+        String[] AUXarrayExpressions = {
+            expressaoS1.getText(),
+            expressaoS2.getText(),
+            expressaoS3.getText(),
+            expressaoS4.getText(),
+            expressaoS5.getText(),
+            expressaoS6.getText(),
+            expressaoS7.getText(),
+            expressaoS8.getText()
+        };
+        
         String[] arrayExpressions = {
             expressaoS1.getText(),
             expressaoS2.getText(),
@@ -1134,7 +1145,7 @@ public class CLPInterface extends javax.swing.JFrame {
         };
         
         int[] arrayOutputValues = new int[8];
-        
+        boolean[] arrayBoolean = new boolean[8];
         SerialPort arduino = SerialPort.getCommPorts()[0];
         arduino.openPort();
         
@@ -1153,7 +1164,9 @@ public class CLPInterface extends javax.swing.JFrame {
                 
                 while (true) {  
                     try {
-                        
+                        for(int i=0; i<8;i++){
+                            arrayExpressions[i] = AUXarrayExpressions[i];
+                        }
                         //Scanner sc = new Scanner(System.in);
                         comPortInput.skip(comPortInput.available());
                         int readOneByASCII;
@@ -1163,9 +1176,9 @@ public class CLPInterface extends javax.swing.JFrame {
                             char letraEscrita = (char)readOneByASCII;
                             phrase = phrase+letraEscrita;
                         }while(readOneByASCII != 10);
-                        System.out.println(phrase);
                         
                         if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
+                            System.out.println(phrase);
                              /* 
                             zE1=0
                             E2=1
@@ -1190,15 +1203,17 @@ public class CLPInterface extends javax.swing.JFrame {
                             
                             for(int i=0; i<8; i++){
                                 for(int j=0; j<8; j++){
-                                    arrayExpressions[i] = arrayExpressions[i].replace(String.format("E%d", j+1), String.valueOf(arrayChar[j]));
+                                    String auxValueBool = (arrayChar[j] == '1' ) ? "true" : "false";
+                                    arrayExpressions[i] = arrayExpressions[i].replace(String.format("E%d", j+1), auxValueBool);
                                 }
-                                arrayOutputValues[i] = (int)se.eval(arrayExpressions[i]);
+                                arrayBoolean[i] = (boolean)se.eval(arrayExpressions[i]);
+                                arrayOutputValues[i] = (arrayBoolean[i]) ? 1 : 0;
+                                
                                 outputsStates = outputsStates.concat(String.format("S%d=%d;", i+1, arrayOutputValues[i]));
                                 //out.write(String.format("yS%d=%d;", i+1, arrayOutputValues[i]).getBytes());
-                                System.out.println(arrayOutputValues[i]);
                             }
                             outputsStates = outputsStates.concat("b\n");
-                            System.out.println(outputsStates);
+                            //System.out.println(outputsStates);
                             out.write(outputsStates.getBytes());
                             //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
                             //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
