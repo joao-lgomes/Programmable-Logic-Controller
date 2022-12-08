@@ -4,8 +4,13 @@
  */
 package screens;
 
+import classes.Interpreter;
 import com.fazecast.jSerialComm.SerialPort;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +22,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 /**
  *
  * @author joao_
@@ -96,25 +102,13 @@ public class CLPInterface extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        expressaoS1 = new javax.swing.JTextField();
-        expressaoS2 = new javax.swing.JTextField();
-        expressaoS3 = new javax.swing.JTextField();
-        expressaoS4 = new javax.swing.JTextField();
-        expressaoS5 = new javax.swing.JTextField();
-        expressaoS6 = new javax.swing.JTextField();
-        expressaoS7 = new javax.swing.JTextField();
-        expressaoS8 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         limparButton = new javax.swing.JButton();
         pararButton = new javax.swing.JButton();
         InicializarButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        expressionsTextArea = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -194,36 +188,6 @@ public class CLPInterface extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Digite as expressões booleanas");
 
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel3.setText("Saída 1:");
-
-        expressaoS1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                expressaoS1ActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel4.setText("Saída 2:");
-
-        jLabel5.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel5.setText("Saída 4:");
-
-        jLabel6.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel6.setText("Saída 3:");
-
-        jLabel7.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel7.setText("Saída 7:");
-
-        jLabel8.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel8.setText("Saída 8:");
-
-        jLabel9.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel9.setText("Saída 5:");
-
-        jLabel10.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel10.setText("Saída 6:");
-
         limparButton.setFont(new java.awt.Font("Dialog", 0, 15)); // NOI18N
         limparButton.setText("LIMPAR");
         limparButton.addActionListener(new java.awt.event.ActionListener() {
@@ -248,6 +212,24 @@ public class CLPInterface extends javax.swing.JFrame {
             }
         });
 
+        expressionsTextArea.setColumns(20);
+        expressionsTextArea.setRows(5);
+        jScrollPane2.setViewportView(expressionsTextArea);
+
+        jButton1.setText("BUSCAR ARQUIVO");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("SALVAR");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -259,31 +241,16 @@ public class CLPInterface extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(expressaoS4)
-                                    .addComponent(expressaoS6)
-                                    .addComponent(expressaoS5, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(expressaoS8)
-                                    .addComponent(expressaoS7, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(expressaoS1, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(expressaoS2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(expressaoS3, javax.swing.GroupLayout.Alignment.LEADING)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(limparButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pararButton, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(InicializarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(InicializarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -291,44 +258,18 @@ public class CLPInterface extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(expressaoS1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(expressaoS4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(expressaoS8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(InicializarButton)
                     .addComponent(pararButton)
                     .addComponent(limparButton))
-                .addGap(14, 14, 14))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
@@ -712,9 +653,8 @@ public class CLPInterface extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel34, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(valE3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(valE2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                        .addComponent(valE1, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(valE2, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                    .addComponent(valE1)
                     .addComponent(valS7)
                     .addComponent(valS6)
                     .addComponent(valS5)
@@ -899,7 +839,7 @@ public class CLPInterface extends javax.swing.JFrame {
 
         expressaoS29.setEditable(false);
         expressaoS29.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        expressaoS29.setText("!E1&&(E2||!(E4&&E7))");
+        expressaoS29.setText("S1=!E1&&(B1||!(E4&&E7))");
         expressaoS29.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 expressaoS29ActionPerformed(evt);
@@ -995,10 +935,6 @@ public class CLPInterface extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void expressaoS1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expressaoS1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_expressaoS1ActionPerformed
 
     private void pararButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pararButtonActionPerformed
         valE1.setText("");
@@ -1107,14 +1043,7 @@ public class CLPInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_expressaoS29ActionPerformed
 
     private void limparButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limparButtonActionPerformed
-        expressaoS1.setText("");
-        expressaoS2.setText("");
-        expressaoS3.setText("");
-        expressaoS4.setText("");
-        expressaoS5.setText("");
-        expressaoS6.setText("");
-        expressaoS7.setText("");
-        expressaoS8.setText("");
+        expressionsTextArea.setText("");
     }//GEN-LAST:event_limparButtonActionPerformed
 
     private void InicializarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InicializarButtonActionPerformed
@@ -1122,7 +1051,10 @@ public class CLPInterface extends javax.swing.JFrame {
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine se = sem.getEngineByName("JavaScript");
             
-        String[] AUXarrayExpressions = {
+        String[] arrayExpressionsTextArea = expressionsTextArea.getText().split("\n");
+        
+        
+        /*String[] AUXarrayExpressions = {
             expressaoS1.getText(),
             expressaoS2.getText(),
             expressaoS3.getText(),
@@ -1142,7 +1074,7 @@ public class CLPInterface extends javax.swing.JFrame {
             expressaoS6.getText(),
             expressaoS7.getText(),
             expressaoS8.getText()
-        };
+        };*/
         
         int[] arrayOutputValues = new int[8];
         boolean[] arrayBoolean = new boolean[8];
@@ -1157,91 +1089,110 @@ public class CLPInterface extends javax.swing.JFrame {
         InputStream comPortInput = arduino.getInputStream();
         //OutputStream comPortOutput = arduino.getOutputStream();
         
-        
         Thread t = new Thread(){
             @Override
             public void run() {
                 
-                while (true) {  
-                    try {
-                        for(int i=0; i<8;i++){
-                            arrayExpressions[i] = AUXarrayExpressions[i];
-                        }
-                        //Scanner sc = new Scanner(System.in);
-                        comPortInput.skip(comPortInput.available());
-                        int readOneByASCII;
-                        String phrase = "";
-                        do{
-                            readOneByASCII = comPortInput.read();
-                            char letraEscrita = (char)readOneByASCII;
-                            phrase = phrase+letraEscrita;
-                        }while(readOneByASCII != 10);
-                        
-                        if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
-                            System.out.println(phrase);
-                             /* 
-                            zE1=0
-                            E2=1
-                            E3=1
-                            E4=0
-                            E5=1
-                            E6=0
-                            E7=0
-                            E8=1
-                            */
-                            String[] splitphrase = phrase.split(";");
-                            //String firstIndex = splitphrase[0].split("/")[1];
+                String[] expressionsExpanded = new String[8];
+                String[] AUXexpressionsExpanded = new String[8];
+                boolean expressionHasError = false;
 
-                            char[] arrayChar = new char[8];
-                            arrayChar[0] = splitphrase[0].charAt(4);
-
-                            for(int i=1; i<8; i++){
-                                arrayChar[i] = splitphrase[i].charAt(3);
+                try {
+                    expressionsExpanded = new Interpreter().validateExpressions(arrayExpressionsTextArea);
+                    AUXexpressionsExpanded = new Interpreter().validateExpressions(arrayExpressionsTextArea);
+                    for(int i=0; i<expressionsExpanded.length-1;i++){
+                        System.out.println(expressionsExpanded[i]);
+                    }
+                } catch (Interpreter.IllegalExpression ex) {
+                    expressionHasError = true;
+                    Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if(!expressionHasError){
+                    while (true) {  
+                        try {
+                            for(int i=0; i<8;i++){
+                                expressionsExpanded[i] = AUXexpressionsExpanded[i];
                             }
-                            
-                            String outputsStates = "Y";
-                            
-                            for(int i=0; i<8; i++){
-                                for(int j=0; j<8; j++){
-                                    String auxValueBool = (arrayChar[j] == '1' ) ? "true" : "false";
-                                    arrayExpressions[i] = arrayExpressions[i].replace(String.format("E%d", j+1), auxValueBool);
+                            //expressionsExpanded = AUXexpressionsExpanded;
+                            /*for(int i=0; i<8;i++){
+                                arrayExpressions[i] = AUXarrayExpressions[i];
+                            }*/
+                            //Scanner sc = new Scanner(System.in);
+                            comPortInput.skip(comPortInput.available());
+                            int readOneByASCII;
+                            String phrase = "";
+                            do{
+                                readOneByASCII = comPortInput.read();
+                                char letraEscrita = (char)readOneByASCII;
+                                phrase = phrase+letraEscrita;
+                            }while(readOneByASCII != 10);
+
+                            if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
+                                System.out.println(phrase);
+                                 /* 
+                                zE1=0
+                                E2=1
+                                E3=1
+                                E4=0
+                                E5=1
+                                E6=0
+                                E7=0
+                                E8=1
+                                */
+                                String[] splitphrase = phrase.split(";");
+
+                                char[] arrayChar = new char[8];
+                                arrayChar[0] = splitphrase[0].charAt(4);
+                                for(int i=1; i<8; i++){
+                                    arrayChar[i] = splitphrase[i].charAt(3);
                                 }
-                                arrayBoolean[i] = (boolean)se.eval(arrayExpressions[i]);
-                                arrayOutputValues[i] = (arrayBoolean[i]) ? 1 : 0;
                                 
-                                outputsStates = outputsStates.concat(String.format("S%d=%d;", i+1, arrayOutputValues[i]));
-                                //out.write(String.format("yS%d=%d;", i+1, arrayOutputValues[i]).getBytes());
-                            }
-                            outputsStates = outputsStates.concat("b\n");
-                            //System.out.println(outputsStates);
-                            out.write(outputsStates.getBytes());
-                            //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
-                            //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
-                            //.E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
-                            //E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
-                                           
-                            valE1.setText(String.valueOf(arrayChar[0]));
-                            valE2.setText(String.valueOf(arrayChar[1]));
-                            valE3.setText(String.valueOf(arrayChar[2]));
-                            valE4.setText(String.valueOf(arrayChar[3]));
-                            valE5.setText(String.valueOf(arrayChar[4]));
-                            valE6.setText(String.valueOf(arrayChar[5]));
-                            valE7.setText(String.valueOf(arrayChar[6]));
-                            valE8.setText(String.valueOf(arrayChar[7]));
-                            valS1.setText(String.valueOf(arrayOutputValues[0]));
-                            valS2.setText(String.valueOf(arrayOutputValues[1]));
-                            valS3.setText(String.valueOf(arrayOutputValues[2]));
-                            valS4.setText(String.valueOf(arrayOutputValues[3]));
-                            valS5.setText(String.valueOf(arrayOutputValues[4]));
-                            valS6.setText(String.valueOf(arrayOutputValues[5]));
-                            valS7.setText(String.valueOf(arrayOutputValues[6]));
-                            valS8.setText(String.valueOf(arrayOutputValues[7]));
-                            }
-                        
-                    } catch (IOException ex) {
-                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ScriptException ex) {
-                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                                
+                                String outputsStates = "Y";
+                                for(int i=0; i<8; i++){
+                                    for(int j=0; j<8; j++){
+                                        String auxValueBool = (arrayChar[j] == '1' ) ? "true" : "false";
+                                        expressionsExpanded[i] = expressionsExpanded[i].replace(String.format("E%d", j+1), auxValueBool);
+                                    }
+                                    System.out.println(expressionsExpanded[i]);
+                                    arrayBoolean[i] = (boolean)se.eval(expressionsExpanded[i]);
+                                    arrayOutputValues[i] = (arrayBoolean[i]) ? 1 : 0;
+
+                                    outputsStates = outputsStates.concat(String.format("S%d=%d;", i+1, arrayOutputValues[i]));
+                                    //out.write(String.format("yS%d=%d;", i+1, arrayOutputValues[i]).getBytes());
+                                }
+                                outputsStates = outputsStates.concat("b\n");
+                                //System.out.println(outputsStates);
+                                out.write(outputsStates.getBytes());
+                                //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+                                //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                                //.E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                                //E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+
+                                valE1.setText(String.valueOf(arrayChar[0]));
+                                valE2.setText(String.valueOf(arrayChar[1]));
+                                valE3.setText(String.valueOf(arrayChar[2]));
+                                valE4.setText(String.valueOf(arrayChar[3]));
+                                valE5.setText(String.valueOf(arrayChar[4]));
+                                valE6.setText(String.valueOf(arrayChar[5]));
+                                valE7.setText(String.valueOf(arrayChar[6]));
+                                valE8.setText(String.valueOf(arrayChar[7]));
+                                valS1.setText(String.valueOf(arrayOutputValues[0]));
+                                valS2.setText(String.valueOf(arrayOutputValues[1]));
+                                valS3.setText(String.valueOf(arrayOutputValues[2]));
+                                valS4.setText(String.valueOf(arrayOutputValues[3]));
+                                valS5.setText(String.valueOf(arrayOutputValues[4]));
+                                valS6.setText(String.valueOf(arrayOutputValues[5]));
+                                valS7.setText(String.valueOf(arrayOutputValues[6]));
+                                valS8.setText(String.valueOf(arrayOutputValues[7]));
+                                }
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (ScriptException ex) {
+                            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }          
@@ -1313,6 +1264,61 @@ public class CLPInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_valS8ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.showOpenDialog(this);
+        
+        File file = fc.getSelectedFile();
+
+        if(file == null){
+            return;
+        }
+        String archivePath = file.getAbsolutePath();
+        
+        FileReader fr;
+        try {
+            fr = new FileReader(archivePath);
+            BufferedReader br = new BufferedReader(fr);
+            
+            String line;
+            
+            String textArchive = "";
+            while((line = br.readLine()) != null){
+                textArchive = textArchive+line+"\n";
+            }
+            expressionsTextArea.setText(textArchive);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new java.io.File("."));
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.showOpenDialog(this);
+        
+        File file = fc.getSelectedFile();
+
+        if(file == null){
+            return;
+        }
+        String archivePath = file.getAbsolutePath();
+        
+        FileWriter pw;
+        try {
+            pw = new FileWriter (archivePath+"/CLP.txt");
+            expressionsTextArea.write(pw);
+        } catch (IOException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1353,7 +1359,6 @@ public class CLPInterface extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton InicializarButton;
-    private javax.swing.JTextField expressaoS1;
     private javax.swing.JTextField expressaoS10;
     private javax.swing.JTextField expressaoS11;
     private javax.swing.JTextField expressaoS12;
@@ -1364,7 +1369,6 @@ public class CLPInterface extends javax.swing.JFrame {
     private javax.swing.JTextField expressaoS17;
     private javax.swing.JTextField expressaoS18;
     private javax.swing.JTextField expressaoS19;
-    private javax.swing.JTextField expressaoS2;
     private javax.swing.JTextField expressaoS20;
     private javax.swing.JTextField expressaoS21;
     private javax.swing.JTextField expressaoS22;
@@ -1375,16 +1379,12 @@ public class CLPInterface extends javax.swing.JFrame {
     private javax.swing.JTextField expressaoS27;
     private javax.swing.JTextField expressaoS28;
     private javax.swing.JTextField expressaoS29;
-    private javax.swing.JTextField expressaoS3;
-    private javax.swing.JTextField expressaoS4;
-    private javax.swing.JTextField expressaoS5;
-    private javax.swing.JTextField expressaoS6;
-    private javax.swing.JTextField expressaoS7;
-    private javax.swing.JTextField expressaoS8;
     private javax.swing.JTextField expressaoS9;
+    private javax.swing.JTextArea expressionsTextArea;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1405,23 +1405,17 @@ public class CLPInterface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton limparButton;
     private javax.swing.JButton pararButton;
     private javax.swing.JTextField valE1;
