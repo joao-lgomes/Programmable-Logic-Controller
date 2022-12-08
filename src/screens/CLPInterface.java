@@ -4,8 +4,13 @@
  */
 package screens;
 
+import classes.Interpreter;
 import com.fazecast.jSerialComm.SerialPort;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +22,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 /**
  *
  * @author joao_
@@ -211,8 +217,18 @@ public class CLPInterface extends javax.swing.JFrame {
         jScrollPane2.setViewportView(expressionsTextArea);
 
         jButton1.setText("BUSCAR ARQUIVO");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("SALVAR");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -823,7 +839,7 @@ public class CLPInterface extends javax.swing.JFrame {
 
         expressaoS29.setEditable(false);
         expressaoS29.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        expressaoS29.setText("!E1&&(E2||!(E4&&E7))");
+        expressaoS29.setText("S1=!E1&&(B1||!(E4&&E7))");
         expressaoS29.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 expressaoS29ActionPerformed(evt);
@@ -1035,7 +1051,10 @@ public class CLPInterface extends javax.swing.JFrame {
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine se = sem.getEngineByName("JavaScript");
             
-        String[] AUXarrayExpressions = {
+        String[] arrayExpressionsTextArea = expressionsTextArea.getText().split("\n");
+        
+        
+        /*String[] AUXarrayExpressions = {
             expressaoS1.getText(),
             expressaoS2.getText(),
             expressaoS3.getText(),
@@ -1055,7 +1074,7 @@ public class CLPInterface extends javax.swing.JFrame {
             expressaoS6.getText(),
             expressaoS7.getText(),
             expressaoS8.getText()
-        };
+        };*/
         
         int[] arrayOutputValues = new int[8];
         boolean[] arrayBoolean = new boolean[8];
@@ -1070,91 +1089,110 @@ public class CLPInterface extends javax.swing.JFrame {
         InputStream comPortInput = arduino.getInputStream();
         //OutputStream comPortOutput = arduino.getOutputStream();
         
-        
         Thread t = new Thread(){
             @Override
             public void run() {
                 
-                while (true) {  
-                    try {
-                        for(int i=0; i<8;i++){
-                            arrayExpressions[i] = AUXarrayExpressions[i];
-                        }
-                        //Scanner sc = new Scanner(System.in);
-                        comPortInput.skip(comPortInput.available());
-                        int readOneByASCII;
-                        String phrase = "";
-                        do{
-                            readOneByASCII = comPortInput.read();
-                            char letraEscrita = (char)readOneByASCII;
-                            phrase = phrase+letraEscrita;
-                        }while(readOneByASCII != 10);
-                        
-                        if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
-                            System.out.println(phrase);
-                             /* 
-                            zE1=0
-                            E2=1
-                            E3=1
-                            E4=0
-                            E5=1
-                            E6=0
-                            E7=0
-                            E8=1
-                            */
-                            String[] splitphrase = phrase.split(";");
-                            //String firstIndex = splitphrase[0].split("/")[1];
+                String[] expressionsExpanded = new String[8];
+                String[] AUXexpressionsExpanded = new String[8];
+                boolean expressionHasError = false;
 
-                            char[] arrayChar = new char[8];
-                            arrayChar[0] = splitphrase[0].charAt(4);
-
-                            for(int i=1; i<8; i++){
-                                arrayChar[i] = splitphrase[i].charAt(3);
+                try {
+                    expressionsExpanded = new Interpreter().validateExpressions(arrayExpressionsTextArea);
+                    AUXexpressionsExpanded = new Interpreter().validateExpressions(arrayExpressionsTextArea);
+                    for(int i=0; i<expressionsExpanded.length-1;i++){
+                        System.out.println(expressionsExpanded[i]);
+                    }
+                } catch (Interpreter.IllegalExpression ex) {
+                    expressionHasError = true;
+                    Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if(!expressionHasError){
+                    while (true) {  
+                        try {
+                            for(int i=0; i<8;i++){
+                                expressionsExpanded[i] = AUXexpressionsExpanded[i];
                             }
-                            
-                            String outputsStates = "Y";
-                            
-                            for(int i=0; i<8; i++){
-                                for(int j=0; j<8; j++){
-                                    String auxValueBool = (arrayChar[j] == '1' ) ? "true" : "false";
-                                    arrayExpressions[i] = arrayExpressions[i].replace(String.format("E%d", j+1), auxValueBool);
+                            //expressionsExpanded = AUXexpressionsExpanded;
+                            /*for(int i=0; i<8;i++){
+                                arrayExpressions[i] = AUXarrayExpressions[i];
+                            }*/
+                            //Scanner sc = new Scanner(System.in);
+                            comPortInput.skip(comPortInput.available());
+                            int readOneByASCII;
+                            String phrase = "";
+                            do{
+                                readOneByASCII = comPortInput.read();
+                                char letraEscrita = (char)readOneByASCII;
+                                phrase = phrase+letraEscrita;
+                            }while(readOneByASCII != 10);
+
+                            if(phrase.charAt(0) == 'z' && phrase.endsWith("\n")){
+                                System.out.println(phrase);
+                                 /* 
+                                zE1=0
+                                E2=1
+                                E3=1
+                                E4=0
+                                E5=1
+                                E6=0
+                                E7=0
+                                E8=1
+                                */
+                                String[] splitphrase = phrase.split(";");
+
+                                char[] arrayChar = new char[8];
+                                arrayChar[0] = splitphrase[0].charAt(4);
+                                for(int i=1; i<8; i++){
+                                    arrayChar[i] = splitphrase[i].charAt(3);
                                 }
-                                arrayBoolean[i] = (boolean)se.eval(arrayExpressions[i]);
-                                arrayOutputValues[i] = (arrayBoolean[i]) ? 1 : 0;
                                 
-                                outputsStates = outputsStates.concat(String.format("S%d=%d;", i+1, arrayOutputValues[i]));
-                                //out.write(String.format("yS%d=%d;", i+1, arrayOutputValues[i]).getBytes());
-                            }
-                            outputsStates = outputsStates.concat("b\n");
-                            //System.out.println(outputsStates);
-                            out.write(outputsStates.getBytes());
-                            //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
-                            //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
-                            //.E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
-                            //E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
-                                           
-                            valE1.setText(String.valueOf(arrayChar[0]));
-                            valE2.setText(String.valueOf(arrayChar[1]));
-                            valE3.setText(String.valueOf(arrayChar[2]));
-                            valE4.setText(String.valueOf(arrayChar[3]));
-                            valE5.setText(String.valueOf(arrayChar[4]));
-                            valE6.setText(String.valueOf(arrayChar[5]));
-                            valE7.setText(String.valueOf(arrayChar[6]));
-                            valE8.setText(String.valueOf(arrayChar[7]));
-                            valS1.setText(String.valueOf(arrayOutputValues[0]));
-                            valS2.setText(String.valueOf(arrayOutputValues[1]));
-                            valS3.setText(String.valueOf(arrayOutputValues[2]));
-                            valS4.setText(String.valueOf(arrayOutputValues[3]));
-                            valS5.setText(String.valueOf(arrayOutputValues[4]));
-                            valS6.setText(String.valueOf(arrayOutputValues[5]));
-                            valS7.setText(String.valueOf(arrayOutputValues[6]));
-                            valS8.setText(String.valueOf(arrayOutputValues[7]));
-                            }
-                        
-                    } catch (IOException ex) {
-                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ScriptException ex) {
-                        Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                                
+                                String outputsStates = "Y";
+                                for(int i=0; i<8; i++){
+                                    for(int j=0; j<8; j++){
+                                        String auxValueBool = (arrayChar[j] == '1' ) ? "true" : "false";
+                                        expressionsExpanded[i] = expressionsExpanded[i].replace(String.format("E%d", j+1), auxValueBool);
+                                    }
+                                    System.out.println(expressionsExpanded[i]);
+                                    arrayBoolean[i] = (boolean)se.eval(expressionsExpanded[i]);
+                                    arrayOutputValues[i] = (arrayBoolean[i]) ? 1 : 0;
+
+                                    outputsStates = outputsStates.concat(String.format("S%d=%d;", i+1, arrayOutputValues[i]));
+                                    //out.write(String.format("yS%d=%d;", i+1, arrayOutputValues[i]).getBytes());
+                                }
+                                outputsStates = outputsStates.concat("b\n");
+                                //System.out.println(outputsStates);
+                                out.write(outputsStates.getBytes());
+                                //...E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+                                //..E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                                //.E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;
+                                //E1=0;E2=1;E3=1;E4=0;E5=1;E6=0;E7=0;E8=1;.
+
+                                valE1.setText(String.valueOf(arrayChar[0]));
+                                valE2.setText(String.valueOf(arrayChar[1]));
+                                valE3.setText(String.valueOf(arrayChar[2]));
+                                valE4.setText(String.valueOf(arrayChar[3]));
+                                valE5.setText(String.valueOf(arrayChar[4]));
+                                valE6.setText(String.valueOf(arrayChar[5]));
+                                valE7.setText(String.valueOf(arrayChar[6]));
+                                valE8.setText(String.valueOf(arrayChar[7]));
+                                valS1.setText(String.valueOf(arrayOutputValues[0]));
+                                valS2.setText(String.valueOf(arrayOutputValues[1]));
+                                valS3.setText(String.valueOf(arrayOutputValues[2]));
+                                valS4.setText(String.valueOf(arrayOutputValues[3]));
+                                valS5.setText(String.valueOf(arrayOutputValues[4]));
+                                valS6.setText(String.valueOf(arrayOutputValues[5]));
+                                valS7.setText(String.valueOf(arrayOutputValues[6]));
+                                valS8.setText(String.valueOf(arrayOutputValues[7]));
+                                }
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (ScriptException ex) {
+                            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }          
@@ -1225,6 +1263,61 @@ public class CLPInterface extends javax.swing.JFrame {
     private void valS8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_valS8ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_valS8ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.showOpenDialog(this);
+        
+        File file = fc.getSelectedFile();
+
+        if(file == null){
+            return;
+        }
+        String archivePath = file.getAbsolutePath();
+        
+        FileReader fr;
+        try {
+            fr = new FileReader(archivePath);
+            BufferedReader br = new BufferedReader(fr);
+            
+            String line;
+            
+            String textArchive = "";
+            while((line = br.readLine()) != null){
+                textArchive = textArchive+line+"\n";
+            }
+            expressionsTextArea.setText(textArchive);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new java.io.File("."));
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.showOpenDialog(this);
+        
+        File file = fc.getSelectedFile();
+
+        if(file == null){
+            return;
+        }
+        String archivePath = file.getAbsolutePath();
+        
+        FileWriter pw;
+        try {
+            pw = new FileWriter (archivePath+"/CLP.txt");
+            expressionsTextArea.write(pw);
+        } catch (IOException ex) {
+            Logger.getLogger(CLPInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
